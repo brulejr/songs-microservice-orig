@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: Songs
+  license:
+    name: MIT
+servers:
+  - url: 'http://songs.brule.net'
+paths:
+  /songs:
+    get:
+      summary: List all songs
+      operationId: listSongs
+      tags:
+        - songs
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Paged array of songs
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Songs'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a song
+      operationId: createSong
+      tags:
+        - songs
+      responses:
+        201:
+          description: Created song
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /songs/{songId}:
+    get:
+      summary: Get a specific song
+      operationId: getSongById
+      tags:
+        - songs
+      parameters:
+        - name: songId
+          in: path
+          required: true
+          description: The identifier of the song to retrieve
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Song corresponding to given identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Deletes a specific song
+      operationId: deleteSong
+      parameters:
+        - name: songId
+          in: path
+          required: true
+          description: The identifier of the song to retrieve
+          schema:
+            type: integer
+            format: int32
+      responses:
+        204:
+          description: Song deleted
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Song:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Songs:
+      type: array
+      items:
+        $ref: "#/components/schemas/Song"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
