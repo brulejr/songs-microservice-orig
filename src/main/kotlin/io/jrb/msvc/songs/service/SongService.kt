@@ -14,21 +14,31 @@ class SongService(val songEntityRepository: SongEntityRepository) {
         val songEntity = SongEntity.fromSong(song)
         return songEntityRepository.save(songEntity)
                 .map { Song.fromSongEntity(it) }
+                .onErrorResume(serviceErrorHandler("Unexpected error when creating song"))
     }
 
     fun deleteSong(songGuid: String): Mono<Void> {
         return songEntityRepository.findSongByGuid(songGuid)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException("Song", songGuid)))
                 .flatMap(songEntityRepository::delete)
+                .onErrorResume(serviceErrorHandler("Unexpected error when deleting song"))
     }
 
     fun findSong(songGuid: String): Mono<Song> {
         return songEntityRepository.findSongByGuid(songGuid)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException("Song", songGuid)))
                 .map { Song.fromSongEntity(it) }
+                .onErrorResume(serviceErrorHandler("Unexpected error when finding song"))
     }
 
     fun listSongs(): Flux<Song> {
         return songEntityRepository.findAll()
                 .map { Song.fromSongEntity(it) }
+                .onErrorResume(serviceErrorHandler("Unexpected error when retrieving songs"))
+    }
+
+    private fun <R> serviceErrorHandler(message: String): (Throwable) -> Mono<R> {
+        return { e -> Mono.error(if (e is ServiceException) e else ServiceException(message, e)) }
     }
 
 }
