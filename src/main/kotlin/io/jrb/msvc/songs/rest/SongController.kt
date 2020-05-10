@@ -1,26 +1,26 @@
 package io.jrb.msvc.songs.rest
 
-import io.jrb.msvc.songs.model.Song
-import io.jrb.msvc.songs.repository.SongRepository
+import io.jrb.msvc.songs.resource.Song
+import io.jrb.msvc.songs.service.SongService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/songs")
-class SongController(val repo: SongRepository) {
+class SongController(val songService: SongService) {
 
     @GetMapping
-    fun listSongs() = repo.findAll()
+    fun listSongs() = songService.listSongs()
 
-    @GetMapping("/{songId}")
-    fun getSongById(@PathVariable songId: Long) = repo.findById(songId)
+    @GetMapping("/{songGuid}")
+    fun getSongById(@PathVariable songGuid: String) = songService.findSong(songGuid)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun save(@RequestBody song: Song) = repo.save(song)
+    fun createSong(@RequestBody song: Song) = songService.createSong(song)
 
-    @DeleteMapping("/{songId}")
+    @DeleteMapping("/{songGuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun save(@PathVariable songId: Long) = repo.deleteById(songId)
+    fun deleteSong(@PathVariable songGuid: String) = songService.deleteSong(songGuid)
 
 }
