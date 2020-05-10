@@ -14,5 +14,5 @@ class GlobalErrorHandler {
 
     @ExceptionHandler(ServiceException::class)
     fun forumException(exception: ServiceException) = ErrorResponseEntity.serverError(exception.message)
-    
+
 }

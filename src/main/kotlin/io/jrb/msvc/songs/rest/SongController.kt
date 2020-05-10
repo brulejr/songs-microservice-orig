@@ -1,10 +1,6 @@
 package io.jrb.msvc.songs.rest
 
-import io.jrb.msvc.songs.resource.ErrorResponseEntity.Companion.notFound
-import io.jrb.msvc.songs.resource.ErrorResponseEntity.Companion.serverError
 import io.jrb.msvc.songs.resource.Song
-import io.jrb.msvc.songs.service.ResourceNotFoundException
-import io.jrb.msvc.songs.service.ServiceException
 import io.jrb.msvc.songs.service.SongService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
