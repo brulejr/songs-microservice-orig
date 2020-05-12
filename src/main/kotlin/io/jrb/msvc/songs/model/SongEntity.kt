@@ -15,7 +15,9 @@ data class SongEntity(
         val additionalTitles: List<String>,
         val themes: List<String>,
         val lyrics: Map<String, List<String>>,
-        val lyricOrder: List<String>
+        val lyricOrder: List<String>,
+        val sourceId: String,
+        val sourceSystem: String
 ) {
 
     companion object {
@@ -29,7 +31,9 @@ data class SongEntity(
                 additionalTitles = song.additionalTitles,
                 themes = song.themes,
                 lyrics = song.lyrics,
-                lyricOrder = song.lyricOrder
+                lyricOrder = song.lyricOrder,
+                sourceId = song.sourceId,
+                sourceSystem = song.sourceSystem
         )
 
         @JvmStatic
@@ -40,15 +44,19 @@ data class SongEntity(
                 additionalTitles = songEntity.additionalTitles,
                 themes = songEntity.themes,
                 lyrics = songEntity.lyrics,
-                lyricOrder = songEntity.lyricOrder
+                lyricOrder = songEntity.lyricOrder,
+                sourceId = songEntity.sourceId,
+                sourceSystem = songEntity.sourceSystem
         )
 
         @JvmStatic
         fun toSongMetadata(songEntity: SongEntity): SongMetadata = SongMetadata(
                 guid = songEntity.guid,
-                title = songEntity.title
+                title = songEntity.title,
+                authors = songEntity.authors
         )
 
     }
 
 }
+
