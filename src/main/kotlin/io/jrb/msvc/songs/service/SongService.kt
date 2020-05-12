@@ -1,5 +1,8 @@
 package io.jrb.msvc.songs.service
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.fge.jsonpatch.JsonPatch
 import io.jrb.msvc.songs.model.SongEntity
 import io.jrb.msvc.songs.repository.SongEntityRepository
 import io.jrb.msvc.songs.resource.Song
@@ -10,7 +13,10 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
-class SongService(val songEntityRepository: SongEntityRepository) {
+class SongService(
+        val songEntityRepository: SongEntityRepository,
+        val objectMapper: ObjectMapper
+) {
 
     private val log = KotlinLogging.logger {}
 
@@ -39,6 +45,23 @@ class SongService(val songEntityRepository: SongEntityRepository) {
         return songEntityRepository.findAll()
                 .map { SongEntity.toSongMetadata(it) }
                 .onErrorResume(serviceErrorHandler("Unexpected error when retrieving songs"))
+    }
+
+    fun updateSong(songGuid: String, songPatch: JsonPatch): Mono<Song> {
+        return songEntityRepository.findSongByGuid(songGuid)
+                .map { songEntity: SongEntity ->
+                    val song: Song = SongEntity.toSong(songEntity)
+                    val updatedSong: Song = applyPatch(song, songPatch)
+                    SongEntity.fromSong(updatedSong, songGuid)
+                }
+                .flatMap{ s: SongEntity -> songEntityRepository.save(s) }
+                .map { s: SongEntity -> SongEntity.toSong(s) }
+                .onErrorResume(serviceErrorHandler("Unexpected error when updating song"))
+    }
+
+    private fun applyPatch(song: Song, songPatch: JsonPatch): Song {
+        val patched: JsonNode = songPatch.apply(objectMapper.convertValue(song, JsonNode::class.java))
+        return objectMapper.treeToValue(patched, Song::class.java)
     }
 
     private fun <R> serviceErrorHandler(message: String): (Throwable) -> Mono<R> {

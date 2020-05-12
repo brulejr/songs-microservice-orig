@@ -37,6 +37,20 @@ data class SongEntity(
         )
 
         @JvmStatic
+        fun fromSong(song: Song, songGuid: String): SongEntity = SongEntity(
+                id = songGuid,
+                guid = song.guid ?: UUID.randomUUID().toString(),
+                title = song.title,
+                authors = song.authors,
+                additionalTitles = song.additionalTitles,
+                themes = song.themes,
+                lyrics = song.lyrics,
+                lyricOrder = song.lyricOrder,
+                sourceId = song.sourceId,
+                sourceSystem = song.sourceSystem
+        )
+
+        @JvmStatic
         fun toSong(songEntity: SongEntity): Song = Song(
                 guid = songEntity.guid,
                 title = songEntity.title,
