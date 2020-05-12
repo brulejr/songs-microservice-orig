@@ -1,20 +1,12 @@
 package io.jrb.msvc.songs.resource
 
-import io.jrb.msvc.songs.model.SongEntity
-
 data class Song(
         val guid: String?,
-        val title: String
+        val title: String,
+        val authors: List<String>,
+        val additionalTitles: List<String>,
+        val themes: List<String>,
+        val lyrics: Map<String, List<String>>,
+        val lyricOrder: List<String>
 ) {
-
-    companion object {
-
-        @JvmStatic
-        fun fromSongEntity(songEntity: SongEntity): Song = Song(
-                guid = songEntity.guid,
-                title = songEntity.title
-        )
-
-    }
-
 }
