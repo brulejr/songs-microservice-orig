@@ -11,7 +11,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class SongEntityTest : Testable {
+internal class SongEntityTest : Testable {
 
     lateinit var id: String
     lateinit var guid: String
