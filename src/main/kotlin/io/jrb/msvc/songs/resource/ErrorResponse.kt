@@ -2,7 +2,6 @@ package io.jrb.msvc.songs.resource
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.util.MultiValueMap
 import java.time.Instant
 
 data class ErrorResponse(
@@ -16,21 +15,12 @@ data class ErrorResponse(
     constructor(status: HttpStatus, message: String?, bindingErrors: List<String>) :
             this(status, status.value(), message, Instant.now(), bindingErrors)
 
-    constructor(status: HttpStatus, error: Int, message: String?) :
-            this(status, error, message, Instant.now(), ArrayList<String>())
-
     constructor(status: HttpStatus, message: String?) :
             this(status, status.value(), message, Instant.now(), ArrayList<String>())
 
 }
 
-class ErrorResponseEntity: ResponseEntity<ErrorResponse> {
-
-    constructor(body: ErrorResponse) :
-            super(body, body.status)
-
-    constructor(body: ErrorResponse, headers: MultiValueMap<String, String>) :
-            super(body, headers, body.status)
+class ErrorResponseEntity(body: ErrorResponse) : ResponseEntity<ErrorResponse>(body, body.status) {
 
     companion object {
 
