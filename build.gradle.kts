@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+	implementation("com.google.guava:guava:28.2-jre")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -30,6 +31,8 @@ dependencies {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
 	testImplementation("io.projectreactor:reactor-test")
+	testImplementation("com.ninja-squad:springmockk:1.1.0")
+	testImplementation("org.apache.commons:commons-lang3")
 }
 
 tasks.withType<Test> {
