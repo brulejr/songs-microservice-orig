@@ -2,6 +2,7 @@ package io.jrb.msvc.songs.rest
 
 import com.github.fge.jsonpatch.JsonPatch
 import io.jrb.msvc.songs.resource.Song
+import io.jrb.msvc.songs.resource.SongMetadata
 import io.jrb.msvc.songs.service.SongService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -13,30 +14,38 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/songs")
 class SongController(val songService: SongService) {
 
     @GetMapping
-    fun listSongs() = songService.listSongs()
+    fun listSongs(): Flux<SongMetadata> {
+        return songService.listSongs()
+    }
 
     @GetMapping("/{songGuid}")
-    fun getSongById(@PathVariable songGuid: String)
-            = songService.findSong(songGuid)
+    fun getSongById(@PathVariable songGuid: String): Mono<Song> {
+        return songService.findSong(songGuid)
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createSong(@RequestBody song: Song)
-            = songService.createSong(song)
+    fun createSong(@RequestBody song: Song): Mono<Song> {
+        return songService.createSong(song)
+    }
 
     @DeleteMapping("/{songGuid}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteSong(@PathVariable songGuid: String)
-            = songService.deleteSong(songGuid)
+    fun deleteSong(@PathVariable songGuid: String) {
+        songService.deleteSong(songGuid)
+    }
 
     @PatchMapping(path = ["/{songGuid}"], consumes = ["application/json-patch+json"])
-    fun patchSong(@PathVariable songGuid: String, @RequestBody songPatch: JsonPatch)
-            = songService.updateSong(songGuid, songPatch)
+    fun patchSong(@PathVariable songGuid: String, @RequestBody songPatch: JsonPatch): Mono<Song> {
+        return songService.updateSong(songGuid, songPatch)
+    }
 
 }

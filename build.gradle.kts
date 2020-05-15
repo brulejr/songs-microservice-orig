@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.3.0.RC1"
 	id("io.spring.dependency-management") version "1.0.9.RELEASE"
+	id("com.google.cloud.tools.jib") version "1.3.0"
 	kotlin("jvm") version "1.3.72"
 	kotlin("plugin.spring") version "1.3.72"
 }
@@ -33,6 +34,12 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("com.ninja-squad:springmockk:1.1.0")
 	testImplementation("org.apache.commons:commons-lang3")
+}
+
+jib {
+	to {
+		image = "brulejr/songs-microservice"
+	}
 }
 
 tasks.withType<Test> {
