@@ -39,6 +39,10 @@ dependencies {
 jib {
 	to {
 		image = "brulejr/songs-microservice"
+		auth {
+			username = System.getenv("DOCKERHUB_CREDENTIALS_USR") ?: "username"
+			password = System.getenv("DOCKERHUB_CREDENTIALS_PSW") ?: "password"
+		}
 	}
 }
 

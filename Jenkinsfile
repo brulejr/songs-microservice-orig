@@ -28,6 +28,14 @@ pipeline {
                 sh './gradlew build'
             }
         }
+        stage ('Docker') {
+            environment {
+                DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+            }
+            steps {
+                sh "./gradlew jib"
+            }
+        }
     }
 
 }
