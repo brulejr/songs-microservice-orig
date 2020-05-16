@@ -8,6 +8,7 @@ import io.jrb.msvc.songs.repository.SongEntityRepository
 import io.jrb.msvc.songs.resource.Song
 import io.jrb.msvc.songs.resource.SongMetadata
 import mu.KotlinLogging
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -42,7 +43,7 @@ class SongService(
     }
 
     fun listSongs(): Flux<SongMetadata> {
-        return songEntityRepository.findAll()
+        return songEntityRepository.findAll(Sort.by("title"))
                 .map { SongEntity.toSongMetadata(it) }
                 .onErrorResume(serviceErrorHandler("Unexpected error when retrieving songs"))
     }

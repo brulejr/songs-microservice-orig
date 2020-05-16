@@ -18,18 +18,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/songs")
+@RequestMapping("/api/v1/songs")
 class SongController(val songService: SongService) {
-
-    @GetMapping
-    fun listSongs(): Flux<SongMetadata> {
-        return songService.listSongs()
-    }
-
-    @GetMapping("/{songGuid}")
-    fun getSongById(@PathVariable songGuid: String): Mono<Song> {
-        return songService.findSong(songGuid)
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,6 +31,16 @@ class SongController(val songService: SongService) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteSong(@PathVariable songGuid: String) {
         songService.deleteSong(songGuid)
+    }
+
+    @GetMapping("/{songGuid}")
+    fun getSongById(@PathVariable songGuid: String): Mono<Song> {
+        return songService.findSong(songGuid)
+    }
+
+    @GetMapping
+    fun listSongs(): Flux<SongMetadata> {
+        return songService.listSongs()
     }
 
     @PatchMapping(path = ["/{songGuid}"], consumes = ["application/json-patch+json"])
