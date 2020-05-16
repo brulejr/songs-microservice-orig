@@ -8,8 +8,10 @@ plugins {
 	kotlin("plugin.spring") version "1.3.72"
 }
 
-group = "io.jrb.msvc"
-version = "0.0.1-SNAPSHOT"
+val group = "io.jrb.msvc"
+val version = "0.0.1-SNAPSHOT"
+val buildNumber by extra("0")
+
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -39,6 +41,7 @@ dependencies {
 jib {
 	to {
 		image = "brulejr/songs-microservice"
+		tags = setOf("$version", "$version.${extra["buildNumber"]}")
 		auth {
 			username = System.getenv("DOCKERHUB_CREDENTIALS_USR") ?: "username"
 			password = System.getenv("DOCKERHUB_CREDENTIALS_PSW") ?: "password"
