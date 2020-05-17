@@ -3,13 +3,14 @@ package io.jrb.msvc.songs.model
 import io.jrb.msvc.songs.resource.Song
 import io.jrb.msvc.songs.resource.SongMetadata
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document
 data class SongEntity(
         @Id val id: String?,
-        val guid: String?,
+        @Indexed(unique = true) val guid: String?,
         val title: String,
         val authors: List<String>,
         val additionalTitles: List<String>,
@@ -37,7 +38,7 @@ data class SongEntity(
         )
 
         @JvmStatic
-        fun fromSong(song: Song, songId: String): SongEntity = SongEntity(
+        fun fromSong(song: Song, songId: String?): SongEntity = SongEntity(
                 id = songId,
                 guid = song.guid ?: UUID.randomUUID().toString(),
                 title = song.title,

@@ -3,6 +3,7 @@ package io.jrb.msvc.songs.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.fge.jsonpatch.JsonPatch
+import com.github.fge.jsonpatch.JsonPatchException
 import io.jrb.msvc.songs.model.SongEntity
 import io.jrb.msvc.songs.repository.SongEntityRepository
 import io.jrb.msvc.songs.resource.Song
@@ -53,7 +54,7 @@ class SongService(
                 .map { songEntity: SongEntity ->
                     val song: Song = SongEntity.toSong(songEntity)
                     val updatedSong: Song = applyPatch(song, songPatch)
-                    SongEntity.fromSong(updatedSong, songGuid)
+                    SongEntity.fromSong(updatedSong, songEntity.id)
                 }
                 .flatMap{ s: SongEntity -> songEntityRepository.save(s) }
                 .map { s: SongEntity -> SongEntity.toSong(s) }
@@ -61,8 +62,12 @@ class SongService(
     }
 
     private fun applyPatch(song: Song, songPatch: JsonPatch): Song {
-        val patched: JsonNode = songPatch.apply(objectMapper.convertValue(song, JsonNode::class.java))
-        return objectMapper.treeToValue(patched, Song::class.java)
+        try {
+            val patched: JsonNode = songPatch.apply(objectMapper.convertValue(song, JsonNode::class.java))
+            return objectMapper.treeToValue(patched, Song::class.java)
+        } catch (e: JsonPatchException) {
+            throw PatchInvalidException(song.guid ?: "UNKNOWN")
+        }
     }
 
     private fun <R> serviceErrorHandler(message: String): (Throwable) -> Mono<R> {
