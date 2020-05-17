@@ -10,5 +10,4 @@ data class Song(
         val lyricOrder: List<String>,
         val sourceId: String,
         val sourceSystem: String
-) {
-}
+)

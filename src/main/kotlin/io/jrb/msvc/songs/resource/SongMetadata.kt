@@ -4,5 +4,4 @@ data class SongMetadata(
         val guid: String?,
         val title: String,
         val authors: List<String>
-) {
-}
+)

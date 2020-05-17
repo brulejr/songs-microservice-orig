@@ -53,7 +53,7 @@ class SongService(
         return songEntityRepository.findSongByGuid(songGuid)
                 .map { songEntity: SongEntity ->
                     val song: Song = SongEntity.toSong(songEntity)
-                    val updatedSong: Song = applyPatch(song, songPatch)
+                    val updatedSong: Song = applyPatch(songGuid, song, songPatch)
                     SongEntity.fromSong(updatedSong, songEntity.id)
                 }
                 .flatMap{ s: SongEntity -> songEntityRepository.save(s) }
@@ -61,12 +61,12 @@ class SongService(
                 .onErrorResume(serviceErrorHandler("Unexpected error when updating song"))
     }
 
-    private fun applyPatch(song: Song, songPatch: JsonPatch): Song {
+    private fun applyPatch(songGuid: String, song: Song, songPatch: JsonPatch): Song {
         try {
             val patched: JsonNode = songPatch.apply(objectMapper.convertValue(song, JsonNode::class.java))
             return objectMapper.treeToValue(patched, Song::class.java)
         } catch (e: JsonPatchException) {
-            throw PatchInvalidException(song.guid ?: "UNKNOWN")
+            throw PatchInvalidException(songGuid, e.message)
         }
     }
 
